@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday!</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #0d0d1a;
+    font-family: 'Lato', sans-serif;
+    overflow-x: hidden;
+    color: #fff;
+  }
+
+  /* ── Starfield ── */
+  .stars {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle var(--dur) ease-in-out infinite alternate;
+    opacity: 0.7;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.2; transform: scale(0.8); }
+    to   { opacity: 1;   transform: scale(1.2); }
+  }
+
+  /* ── Confetti ── */
+  .confetti-wrapper {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    top: -20px;
+    border-radius: 2px;
+    animation: fall var(--fall-dur) linear infinite;
+    animation-delay: var(--fall-delay);
+    opacity: 0.85;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1;   }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; }
+  }
+
+  /* ── Balloons ── */
+  .balloons {
+    position: fixed;
+    bottom: -120px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: space-around;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .balloon {
+    width: 50px;
+    height: 65px;
+    border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
+    position: relative;
+    animation: floatUp var(--b-dur) ease-in infinite;
+    animation-delay: var(--b-delay);
+    opacity: 0;
+  }
+  .balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 20px;
+    background: rgba(255,255,255,0.4);
+  }
+  @keyframes floatUp {
+    0%   { opacity: 0;   transform: translateY(0)      rotate(-5deg); }
+    10%  { opacity: 0.9; }
+    90%  { opacity: 0.9; }
+    100% { opacity: 0;   transform: translateY(-110vh) rotate(5deg);  }
+  }
+
+  /* ── Page layout ── */
+  .page {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 48px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    animation: fadeUp 1s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+  .hero .subtitle {
+    font-size: 13px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #f0b94a;
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 10vw, 110px);
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, #f9d94e 0%, #f07e48 40%, #e4406e 70%, #9b4fe8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .hero .name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+  .hero .divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #f9d94e, #e4406e);
+    margin: 0 auto 24px;
+    border-radius: 2px;
+  }
+  .hero .message {
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+    max-width: 480px;
+    line-height: 1.8;
+    margin: 0 auto;
+  }
+
+  /* ── Cake SVG section ── */
+  .cake-section {
+    animation: fadeUp 1s ease 0.3s both;
+  }
+
+  /* ── Info Cards ── */
+  .cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 1s ease 0.5s both;
+  }
+  .card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 28px 24px;
+    text-align: center;
+    width: 180px;
+    backdrop-filter: blur(6px);
+    transition: transform 0.3s, background 0.3s;
+    cursor: default;
+  }
+  .card:hover {
+    transform: translateY(-8px);
+    background: rgba(255,255,255,0.12);
+  }
+  .card .icon  { font-size: 36px; margin-bottom: 12px; display: block; }
+  .card .card-title {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #f0b94a;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .card .card-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* ── Wishes ── */
+  .wishes-section {
+    text-align: center;
+    animation: fadeUp 1s ease 0.7s both;
+  }
+  .wishes-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .wish-bubbles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 600px;
+  }
+  .wish {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 10px 22px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 300;
+    transition: transform 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
+    cursor: default;
+  }
+  .wish:hover {
+    transform: scale(1.06);
+    background: rgba(240,185,74,0.25);
+    border-color: #f0b94a;
+    color: #fff;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: fadeUp 1s ease 0.9s both;
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars background -->
+<div class="stars" id="stars"></div>
+
+<!-- Falling confetti -->
+<div class="confetti-wrapper" id="confetti"></div>
+
+<!-- Rising balloons -->
+<div class="balloons" id="balloons"></div>
+
+<div class="page">
+
+  <!-- Hero section -->
+  <div class="hero">
+    <p class="subtitle">✦ Celebrating You ✦</p>
+    <h1>Happy Birthday!</h1>
+    <p class="name">Deepak Kumar</p>
+    <div class="divider"></div>
+    <p class="message">
+      Today is your day to shine. May every moment be filled with joy, laughter,
+      and all the things that make your heart sing. 🎉
+    </p>
+  </div>
+
+  <!-- Animated SVG Cake -->
+  <div class="cake-section">
+    <svg width="200" height="190" viewBox="0 0 200 190" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Birthday cake with candles">
+      <!-- Bottom layer -->
+      <rect x="20"  y="120" width="160" height="55" rx="12" fill="#e4406e"/>
+      <rect x="20"  y="108" width="160" height="18" rx="4"  fill="#f07e48"/>
+      <!-- Middle layer -->
+      <rect x="35"  y="72"  width="130" height="44" rx="10" fill="#9b4fe8"/>
+      <rect x="35"  y="62"  width="130" height="16" rx="4"  fill="#f9d94e"/>
+      <!-- Top layer -->
+      <rect x="55"  y="40"  width="90"  height="30" rx="8"  fill="#e4406e"/>
+      <rect x="55"  y="32"  width="90"  height="14" rx="4"  fill="#f07e48"/>
+      <!-- Frosting drips – bottom -->
+      <path d="M30 120 Q45 108 60 120 Q75 108 90 120 Q105 108 120 120 Q135 108 150 120 Q165 108 170 120"
+            stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.5"/>
+      <!-- Frosting drips – middle -->
+      <path d="M43 72 Q55 62 67 72 Q79 62 91 72 Q103 62 115 72 Q127 62 139 72 Q151 62 157 72"
+            stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+      <!-- Sprinkles -->
+      <rect x="45"  y="132" width="10" height="4" rx="2" fill="#f9d94e" transform="rotate(25 50 134)"/>
+      <rect x="80"  y="140" width="10" height="4" rx="2" fill="#fff"    transform="rotate(-15 85 142)"/>
+      <rect x="115" y="128" width="10" height="4" rx="2" fill="#f07e48" transform="rotate(40 120 130)"/>
+      <rect x="148" y="138" width="8"  height="3" rx="2" fill="#9b4fe8" transform="rotate(-20 152 139)"/>
+      <rect x="60"  y="148" width="8"  height="3" rx="2" fill="#e4406e" transform="rotate(10 64 149)"/>
+      <rect x="130" y="145" width="8"  height="3" rx="2" fill="#f9d94e" transform="rotate(-30 134 146)"/>
+      <!-- Candles -->
+      <rect x="74"  y="18" width="8" height="22" rx="3" fill="#f9d94e"/>
+      <rect x="96"  y="12" width="8" height="22" rx="3" fill="#9b4fe8"/>
+      <rect x="118" y="18" width="8" height="22" rx="3" fill="#f07e48"/>
+      <!-- Animated flames -->
+      <ellipse cx="78"  cy="14" rx="5" ry="7" fill="#FFD700" opacity="0.9">
+        <animate attributeName="ry" values="7;9;7" dur="0.8s"  repeatCount="indefinite"/>
+        <animate attributeName="cy" values="14;12;14" dur="0.8s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="100" cy="8"  rx="5" ry="7" fill="#FF6B35" opacity="0.9">
+        <animate attributeName="ry" values="7;9;7" dur="1.1s"  repeatCount="indefinite"/>
+        <animate attributeName="cy" values="8;6;8"   dur="1.1s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="122" cy="14" rx="5" ry="7" fill="#FFD700" opacity="0.9">
+        <animate attributeName="ry" values="7;9;7" dur="0.9s"  repeatCount="indefinite"/>
+        <animate attributeName="cy" values="14;12;14" dur="0.9s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- Decorative stars -->
+      <text x="30"  y="100" font-size="12" fill="#f9d94e" opacity="0.7">✦</text>
+      <text x="155" y="98"  font-size="10" fill="#fff"    opacity="0.6">✦</text>
+      <text x="25"  y="160" font-size="8"  fill="#9b4fe8" opacity="0.7">✦</text>
+      <text x="168" y="155" font-size="11" fill="#f07e48" opacity="0.7">✦</text>
+    </svg>
+  </div>
+
+  <!-- Info cards -->
+  <div class="cards">
+    <div class="card">
+      <span class="icon">🎂</span>
+      <p class="card-title">Age</p>
+      <p class="card-value">20</p>
+    </div>
+    <div class="card">
+      <span class="icon">📅</span>
+      <p class="card-title">Date</p>
+      <p class="card-value" >9 March</p>
+    </div>
+    <div class="card">
+      <span class="icon">🌟</span>
+      <p class="card-title">Wishes</p>
+      <p class="card-value">∞</p>
+    </div>
+  </div>
+
+  <!-- Wish bubbles -->
+  <div class="wishes-section">
+    <h2>Here's to you 🥂</h2>
+    <div class="wish-bubbles">
+      <span class="wish">Health &amp; Happiness</span>
+      <span class="wish">Adventure ahead</span>
+      <span class="wish">Dreams come true</span>
+      <span class="wish">Endless laughter</span>
+      <span class="wish">Love always</span>
+      <span class="wish">New beginnings</span>
+      <span class="wish">Peace of mind</span>
+      <span class="wish">Bright future</span>
+    </div>
+  </div>
+
+  <div class="footer">✦ &nbsp; Made with love &nbsp; ✦</div>
+</div>
+
+<script>
+  /* ── Stars ── */
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = (Math.random() * 2.5 + 0.5).toFixed(1);
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${(Math.random()*100).toFixed(2)}%;
+      top:${(Math.random()*100).toFixed(2)}%;
+      --dur:${(Math.random()*3+2).toFixed(1)}s;
+      animation-delay:${(Math.random()*4).toFixed(1)}s;
+    `;
+    starsEl.appendChild(s);
+  }
+
+  /* ── Confetti ── */
+  const confettiEl = document.getElementById('confetti');
+  const confettiColors = ['#f9d94e','#f07e48','#e4406e','#9b4fe8','#4fc3e4','#7de87d','#fff'];
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.cssText = `
+      left:${(Math.random()*100).toFixed(2)}%;
+      background:${confettiColors[Math.floor(Math.random()*confettiColors.length)]};
+      width:${(Math.random()*8+6).toFixed(0)}px;
+      height:${(Math.random()*10+8).toFixed(0)}px;
+      --fall-dur:${(Math.random()*4+4).toFixed(1)}s;
+      --fall-delay:${(Math.random()*6).toFixed(1)}s;
+    `;
+    confettiEl.appendChild(c);
+  }
+
+  /* ── Balloons ── */
+  const balloonsEl = document.getElementById('balloons');
+  const balloonColors = ['#e4406e','#f9d94e','#9b4fe8','#f07e48','#4fc3e4','#7de87d','#ff6699'];
+  for (let i = 0; i < 10; i++) {
+    const b = document.createElement('div');
+    b.className = 'balloon';
+    b.style.cssText = `
+      background:${balloonColors[i % balloonColors.length]};
+      --b-dur:${(Math.random()*5+7).toFixed(1)}s;
+      --b-delay:${(Math.random()*8).toFixed(1)}s;
+    `;
+    balloonsEl.appendChild(b);
+  }
+
+  /* ── Today's date ── */
+  const dateEl = document.getElementById('today-date');
+  dateEl.textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+</script>
+</body>
+</html>
